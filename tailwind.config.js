@@ -12,6 +12,12 @@ export default {
         customDark_5: "#383A40",
         customDark_6: "#4A4C51",
 
+        customGray_0: "#4E5058",
+        customGray_1: "#5E6068",
+        customGray_2: "#6D6F78",
+        customGray_3: "#8F939B",
+        customGray_4: "#B1B7BE",
+
         customText: "#EBEBEB",
       },
     },

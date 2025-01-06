@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { TodoState } from "..";
 import useFetchTodoAll from "./hook/useFetchTodoAll";
 import useFetchTodoDone from "./hook/useFetchTodoDone";
 import useFetchTodoPending from "./hook/useFetchTodoPending";
 import useTimeFormat from "./hook/useTimeFormat";
 import useTodoUpdate from "./hook/useTodoUpdate";
-import { useTodoStore } from "./TodoStore";
+import { FIND_OPTIONS, useTodoStore } from "./TodoStore";
 
 export default function App() {
   const { fetchTodoAll } = useFetchTodoAll();
@@ -13,16 +13,13 @@ export default function App() {
   const { fetchTodoDone } = useFetchTodoDone();
   const { todoUpdate } = useTodoUpdate();
   const { timeFormat } = useTimeFormat();
-  const { todoListState } = useTodoStore();
-
-  const FIND_OPTIONS = {
-    ALL: "all",
-    PENDING: "pending",
-    DONE: "done",
-  };
-  const [findOption, setFindOption] = useState<string>(FIND_OPTIONS.ALL);
+  const { findOption, setFindOption, todoListState } = useTodoStore();
 
   // render시 all fetch
+  useEffect(() => {
+    console.log(todoListState);
+  }, [todoListState]);
+
   useEffect(() => {
     fetchTodoAll({ page: 1 });
   }, []);
@@ -79,30 +76,29 @@ export default function App() {
           {todoListState.todoList.map((todo: TodoState) => (
             <div
               key={todo.id}
-              className="mb-1 flex w-full gap-x-3 rounded border border-gray-300 px-2 py-4"
+              className="border-customDark_6 mb-2 flex w-full gap-x-3 rounded border px-2 py-4"
             >
-              <div className="relative flex items-center">
-                <input
-                  type="checkbox"
-                  onChange={() => {
-                    todoUpdate({
-                      todo: {
-                        ...todo,
-                        isDone: !todo.isDone,
-                      },
-                    });
-                  }}
-                  checked={todo.isDone}
-                  className="peer h-6 w-6 appearance-none rounded bg-white checked:bg-green-600"
-                />
-                <span className="absolute left-1.5 hidden text-white peer-checked:inline-block">
+              <button
+                className={`relative flex h-6 w-6 cursor-pointer items-center rounded ${todo.isDone ? "bg-green-600" : "bg-white"}`}
+                onClick={() => {
+                  todoUpdate({
+                    todo: {
+                      ...todo,
+                      isDone: !todo.isDone,
+                    },
+                  });
+                }}
+              >
+                <span
+                  className={`absolute left-1.5 text-white ${todo.isDone ? "block" : "hidden"}`}
+                >
                   &#10003;
                 </span>
-              </div>
+              </button>
               <button className="truncate">
                 <div className="truncate text-start">{todo.title}</div>
 
-                <div className="truncate text-start text-xs">
+                <div className="text-customGray_4 truncate text-start text-xs">
                   {todo.description}
                 </div>
                 <div className="text-start text-xs">

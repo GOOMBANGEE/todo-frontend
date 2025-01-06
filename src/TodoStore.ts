@@ -2,11 +2,20 @@ import { create } from "zustand";
 import { TodoState } from "..";
 
 interface TodoStore {
+  findOption: FindOption;
+  setFindOption: (state: FindOption) => void;
   todoState: TodoState;
   setTodoState: (state: Partial<TodoState>) => void;
   todoListState: TodoListState;
   setTodoListState: (state: TodoListState) => void;
 }
+
+export const FIND_OPTIONS = {
+  ALL: "all",
+  PENDING: "pending",
+  DONE: "done",
+} as const;
+export type FindOption = (typeof FIND_OPTIONS)[keyof typeof FIND_OPTIONS];
 
 interface TodoListState {
   todoList: TodoState[];
@@ -32,6 +41,8 @@ const initialTodoListState: TodoListState = {
 };
 
 export const useTodoStore = create<TodoStore>((set) => ({
+  findOption: FIND_OPTIONS.ALL,
+  setFindOption: (state) => set({ findOption: state }),
   todoState: initialTodoState,
   setTodoState: (state) =>
     set((prev) => ({ todoState: { ...prev.todoState, ...state } })),
