@@ -7,6 +7,7 @@ import useFetchTodoDone from "./hook/useFetchTodoDone";
 import useFetchTodoInProgress from "./hook/useFetchTodoInProgress";
 import useTimeFormat from "./hook/useTimeFormat";
 import useTodoCreate from "./hook/useTodoCreate";
+import useTodoSearch from "./hook/useTodoSearch";
 import useTodoUpdate from "./hook/useTodoUpdate";
 import { FIND_OPTIONS, useTodoStore } from "./TodoStore";
 
@@ -15,6 +16,7 @@ export default function App() {
   const { fetchTodoInProgress } = useFetchTodoInProgress();
   const { fetchTodoDone } = useFetchTodoDone();
   const { todoUpdate } = useTodoUpdate();
+  const { todoSearch } = useTodoSearch();
   const { timeFormat } = useTimeFormat();
   const { todoCreate } = useTodoCreate();
   const {
@@ -24,6 +26,7 @@ export default function App() {
     setTodoState,
     resetTodoState,
     todoListState,
+    searchTodoListState,
   } = useTodoStore();
 
   const [createModalOpen, setCreateModalOpen] = useState<boolean>(false);
@@ -84,6 +87,8 @@ export default function App() {
   //   console.log("startDate : ", todoState.startDate);
   //   console.log("endDate : ", todoState.endDate);
   // }, [todoState]);
+
+  const [searchKeyword, setSearchKeyword] = useState<string>("");
 
   return (
     <div className="text-customText relative mx-auto flex w-1/3 justify-center py-8">
@@ -191,44 +196,100 @@ export default function App() {
               Done
             </button>
           </div>
-          <div className="ml-auto"> search</div>
+
+          <input
+            placeholder="search"
+            className="ml-auto"
+            onChange={(e) => {
+              setSearchKeyword(e.target.value);
+              todoSearch({ keyword: e.target.value });
+            }}
+          />
         </div>
         <div>
-          {todoListState.todoList.map((todo: TodoState) => (
-            <div
-              key={todo.id}
-              className="border-customDark_6 mb-2 flex w-full gap-x-3 rounded border px-2 py-4"
-            >
-              <button
-                className={`relative flex h-6 w-6 cursor-pointer items-center rounded ${todo.isDone ? "bg-green-600" : "bg-white"}`}
-                onClick={() => {
-                  todoUpdate({
-                    todo: {
-                      ...todo,
-                      isDone: !todo.isDone,
-                    },
-                  });
-                }}
-              >
-                <span
-                  className={`absolute left-1.5 text-white ${todo.isDone ? "block" : "hidden"}`}
+          {searchKeyword ? (
+            <>
+              {searchTodoListState.todoList.map((todo: TodoState) => (
+                <div
+                  key={todo.id}
+                  className="border-customDark_6 mb-2 flex w-full gap-x-3 rounded border px-2 py-4"
                 >
-                  &#10003;
-                </span>
-              </button>
-              <button className="truncate">
-                <div className="truncate text-start">{todo.title}</div>
+                  <button
+                    className={`relative flex h-6 w-6 cursor-pointer items-center rounded ${todo.isDone ? "bg-green-600" : "bg-white"}`}
+                    onClick={() => {
+                      todoUpdate({
+                        todo: {
+                          ...todo,
+                          isDone: !todo.isDone,
+                        },
+                      });
+                    }}
+                  >
+                    <span
+                      className={`absolute left-1.5 text-white ${todo.isDone ? "block" : "hidden"}`}
+                    >
+                      &#10003;
+                    </span>
+                  </button>
+                  <button className="truncate">
+                    <div className="truncate text-start">{todo.title}</div>
 
-                <div className="text-customGray_4 truncate text-start text-xs">
-                  {todo.description}
+                    <div className="text-customGray_4 truncate text-start text-xs">
+                      {todo.description}
+                    </div>
+                    <div className="text-start text-xs">
+                      {todo.startDate
+                        ? timeFormat({ time: todo.startDate })
+                        : null}{" "}
+                      ~{" "}
+                      {todo.endDate ? timeFormat({ time: todo.endDate }) : null}
+                    </div>
+                  </button>
                 </div>
-                <div className="text-start text-xs">
-                  {todo.startDate ? timeFormat({ time: todo.startDate }) : null}{" "}
-                  ~ {todo.endDate ? timeFormat({ time: todo.endDate }) : null}
+              ))}
+            </>
+          ) : (
+            <>
+              {todoListState.todoList.map((todo: TodoState) => (
+                <div
+                  key={todo.id}
+                  className="border-customDark_6 mb-2 flex w-full gap-x-3 rounded border px-2 py-4"
+                >
+                  <button
+                    className={`relative flex h-6 w-6 cursor-pointer items-center rounded ${todo.isDone ? "bg-green-600" : "bg-white"}`}
+                    onClick={() => {
+                      todoUpdate({
+                        todo: {
+                          ...todo,
+                          isDone: !todo.isDone,
+                        },
+                      });
+                    }}
+                  >
+                    <span
+                      className={`absolute left-1.5 text-white ${todo.isDone ? "block" : "hidden"}`}
+                    >
+                      &#10003;
+                    </span>
+                  </button>
+                  <button className="truncate">
+                    <div className="truncate text-start">{todo.title}</div>
+
+                    <div className="text-customGray_4 truncate text-start text-xs">
+                      {todo.description}
+                    </div>
+                    <div className="text-start text-xs">
+                      {todo.startDate
+                        ? timeFormat({ time: todo.startDate })
+                        : null}{" "}
+                      ~{" "}
+                      {todo.endDate ? timeFormat({ time: todo.endDate }) : null}
+                    </div>
+                  </button>
                 </div>
-              </button>
-            </div>
-          ))}
+              ))}
+            </>
+          )}
         </div>
       </div>
     </div>

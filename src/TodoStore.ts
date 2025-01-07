@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { TodoState } from "..";
+import { TodoListState, TodoState } from "..";
 
 interface TodoStore {
   findOption: FindOption;
@@ -9,6 +9,8 @@ interface TodoStore {
   resetTodoState: () => void;
   todoListState: TodoListState;
   setTodoListState: (state: TodoListState) => void;
+  searchTodoListState: TodoListState;
+  setSearchTodoListState: (state: TodoListState) => void;
 }
 
 export const FIND_OPTIONS = {
@@ -27,13 +29,6 @@ const initialTodoState: TodoState = {
   endDate: undefined,
 };
 
-interface TodoListState {
-  todoList: TodoState[];
-  total: number;
-  currentPage: number;
-  totalPage: number;
-}
-
 const initialTodoListState: TodoListState = {
   todoList: [],
   total: 0,
@@ -51,4 +46,9 @@ export const useTodoStore = create<TodoStore>((set) => ({
   todoListState: initialTodoListState,
   setTodoListState: (state) =>
     set((prev) => ({ todoListState: { ...prev.todoListState, ...state } })),
+  searchTodoListState: initialTodoListState,
+  setSearchTodoListState: (state) =>
+    set((prev) => ({
+      searchTodoListState: { ...prev.searchTodoListState, ...state },
+    })),
 }));

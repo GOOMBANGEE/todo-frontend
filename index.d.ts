@@ -6,3 +6,10 @@ export interface TodoState {
   startDate: string | undefined;
   endDate: string | undefined;
 }
+
+export interface TodoListState {
+  todoList: TodoState[];
+  total: number;
+  currentPage: number;
+  totalPage: number;
+}
