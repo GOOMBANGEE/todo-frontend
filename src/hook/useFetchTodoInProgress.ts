@@ -6,15 +6,15 @@ interface Props {
   page: number;
 }
 
-export default function useFetchTodoPending() {
+export default function useFetchTodoInProgress() {
   const { setTodoListState } = useTodoStore();
   const { envState } = useEnvStore();
 
-  const fetchTodoPending = async (props: Readonly<Props>) => {
+  const fetchTodoInProgress = async (props: Readonly<Props>) => {
     const todoUrl = envState.todoUrl;
     try {
       const response = await axios.get(
-        `${todoUrl}/pending?currentPage=${props.page}`,
+        `${todoUrl}/in-progress?currentPage=${props.page}`,
       );
       setTodoListState(response.data);
     } catch (err) {
@@ -22,5 +22,5 @@ export default function useFetchTodoPending() {
     }
   };
 
-  return { fetchTodoPending };
+  return { fetchTodoInProgress };
 }

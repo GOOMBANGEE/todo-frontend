@@ -11,7 +11,9 @@
   },
   "dependencies": {
     "axios": "^1.7.9",
+    "date-fns": "^4.1.0",
     "react": "^18.3.1",
+    "react-datepicker": "^7.6.0",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.1.1",
     "zustand": "^5.0.2"
@@ -19,6 +21,7 @@
   "devDependencies": {
     "@eslint/js": "^9.17.0",
     "@types/react": "^18.3.18",
+    "@types/react-datepicker": "^7.0.0",
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "autoprefixer": "^10.4.20",

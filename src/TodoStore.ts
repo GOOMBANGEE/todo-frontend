@@ -6,23 +6,17 @@ interface TodoStore {
   setFindOption: (state: FindOption) => void;
   todoState: TodoState;
   setTodoState: (state: Partial<TodoState>) => void;
+  resetTodoState: () => void;
   todoListState: TodoListState;
   setTodoListState: (state: TodoListState) => void;
 }
 
 export const FIND_OPTIONS = {
   ALL: "all",
-  PENDING: "pending",
+  IN_PROGRESS: "inProgress",
   DONE: "done",
 } as const;
 export type FindOption = (typeof FIND_OPTIONS)[keyof typeof FIND_OPTIONS];
-
-interface TodoListState {
-  todoList: TodoState[];
-  total: number;
-  currentPage: number;
-  totalPage: number;
-}
 
 const initialTodoState: TodoState = {
   id: undefined,
@@ -32,6 +26,13 @@ const initialTodoState: TodoState = {
   startDate: undefined,
   endDate: undefined,
 };
+
+interface TodoListState {
+  todoList: TodoState[];
+  total: number;
+  currentPage: number;
+  totalPage: number;
+}
 
 const initialTodoListState: TodoListState = {
   todoList: [],
@@ -46,7 +47,7 @@ export const useTodoStore = create<TodoStore>((set) => ({
   todoState: initialTodoState,
   setTodoState: (state) =>
     set((prev) => ({ todoState: { ...prev.todoState, ...state } })),
-
+  resetTodoState: () => set({ todoState: initialTodoState }),
   todoListState: initialTodoListState,
   setTodoListState: (state) =>
     set((prev) => ({ todoListState: { ...prev.todoListState, ...state } })),
