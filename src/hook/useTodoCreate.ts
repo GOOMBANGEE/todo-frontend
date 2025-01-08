@@ -4,7 +4,8 @@ import { useEnvStore } from "../EnvStore";
 import { useTodoStore } from "../TodoStore";
 
 export default function useTodoCreate() {
-  const { todoState, todoListState, setTodoListState } = useTodoStore();
+  const { todoState, todoListState, setTodoListState, resetTodoState } =
+    useTodoStore();
   const { envState } = useEnvStore();
 
   const todoCreate = async () => {
@@ -17,6 +18,7 @@ export default function useTodoCreate() {
 
     const newTodoList: TodoState[] = [...todoListState.todoList, todo];
     setTodoListState({ ...todoListState, todoList: newTodoList });
+    resetTodoState();
   };
 
   return { todoCreate };

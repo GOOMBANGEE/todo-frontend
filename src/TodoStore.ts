@@ -14,9 +14,9 @@ interface TodoStore {
 }
 
 export const FIND_OPTIONS = {
-  ALL: "all",
-  IN_PROGRESS: "inProgress",
-  DONE: "done",
+  ALL: "All",
+  IN_PROGRESS: "In progress",
+  DONE: "Done",
 } as const;
 export type FindOption = (typeof FIND_OPTIONS)[keyof typeof FIND_OPTIONS];
 
