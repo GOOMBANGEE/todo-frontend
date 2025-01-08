@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { TodoState } from "../..";
+import { useGlobalStore } from "../GlobalStore";
 import useTimeFormat from "../hook/useTimeFormat";
 import useTodoDelete from "../hook/useTodoDelete";
 import useTodoUpdate from "../hook/useTodoUpdate";
@@ -12,8 +13,9 @@ interface Props {
 export default function TodoList(props: Readonly<Props>) {
   const { todoUpdate } = useTodoUpdate();
   const { todoDelete } = useTodoDelete();
-  const { timeFormat } = useTimeFormat();
+  const { timeFormatMMDD } = useTimeFormat();
   const { todoState, setTodoState } = useTodoStore();
+  const { setGlobalState } = useGlobalStore();
 
   const [isFocus, setIsFocus] = useState<boolean>(false);
 
@@ -26,8 +28,13 @@ export default function TodoList(props: Readonly<Props>) {
             setTodoState({ id: todo.id });
             setIsFocus(true);
           }}
+          onMouseLeave={() => {
+            setTodoState({ id: undefined });
+            setIsFocus(false);
+          }}
           className="border-customDark_6 mb-2 flex w-full gap-x-3 rounded border px-2 py-4"
         >
+          {/* done check */}
           <button
             className={`relative flex h-6 w-6 flex-shrink-0 cursor-pointer items-center rounded ${todo.isDone ? "bg-green-600" : "bg-white"}`}
             onClick={() => {
@@ -45,18 +52,26 @@ export default function TodoList(props: Readonly<Props>) {
               &#10003;
             </span>
           </button>
-          <button className="w-full cursor-pointer truncate">
+          {/* detail */}
+          <button
+            onClick={() => {
+              setTodoState(todo);
+              setGlobalState({ detail: true });
+            }}
+            className="w-full cursor-pointer truncate"
+          >
             <div className="truncate text-start">{todo.title}</div>
 
             <div className="text-customGray_4 truncate text-start text-xs">
               {todo.description}
             </div>
             <div className="text-start text-xs">
-              {todo.startDate ? timeFormat({ time: todo.startDate }) : null} ~
-              {todo.endDate ? timeFormat({ time: todo.endDate }) : null}
+              {todo.startDate ? timeFormatMMDD({ time: todo.startDate }) : null}{" "}
+              ~{todo.endDate ? timeFormatMMDD({ time: todo.endDate }) : null}
             </div>
           </button>
 
+          {/* delete */}
           <button
             onClick={() => {
               todo.id ? todoDelete({ id: todo.id }) : null;

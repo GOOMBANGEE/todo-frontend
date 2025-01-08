@@ -3,7 +3,7 @@ interface Props {
 }
 
 export default function useTimeFormat() {
-  const timeFormat = (props: Readonly<Props>) => {
+  const timeFormatMMDD = (props: Readonly<Props>) => {
     const localeTime = props.time.toLocaleString();
     // const year = localeTime.slice(0, 4);
     const month = localeTime.slice(5, 7);
@@ -14,5 +14,14 @@ export default function useTimeFormat() {
     return `${month}.${day}`;
   };
 
-  return { timeFormat };
+  const timeFormatYYMMDD = (props: Readonly<Props>) => {
+    const localeTime = props.time.toLocaleString();
+    const year = localeTime.slice(0, 4);
+    const month = localeTime.slice(5, 7);
+    const day = localeTime.slice(8, 10);
+
+    return `${year}.${month}.${day}`;
+  };
+
+  return { timeFormatMMDD, timeFormatYYMMDD };
 }

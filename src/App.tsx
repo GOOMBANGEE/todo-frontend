@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import CreateTodo from "./component/CreateTodo";
 import FindOptionButton from "./component/FindOptionButton";
+import TodoDetail from "./component/TodoDetail";
 import TodoList from "./component/TodoList";
 import useFetchTodoAll from "./hook/useFetchTodoAll";
 import useTodoSearch from "./hook/useTodoSearch";
@@ -27,8 +28,8 @@ export default function App() {
   const [searchKeyword, setSearchKeyword] = useState<string>("");
 
   return (
-    <div className="text-customText relative mx-auto flex w-1/3 justify-center py-8">
-      <div className="flex w-full flex-col">
+    <div className="text-customText relative mx-auto flex h-full w-1/3 justify-center py-8">
+      <div className="flex h-full w-full flex-col">
         <nav className="ml-auto"> nav login</nav>
         <CreateTodo />
 
@@ -55,6 +56,8 @@ export default function App() {
             <TodoList todoList={todoListState.todoList} />
           )}
         </div>
+
+        <TodoDetail />
       </div>
     </div>
   );
