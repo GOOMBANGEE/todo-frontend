@@ -8,7 +8,8 @@ interface Props {
 }
 
 export default function useTodoUpdate() {
-  const { findOption, todoListState, setTodoListState } = useTodoStore();
+  const { findOption, setTodoState, todoListState, setTodoListState } =
+    useTodoStore();
   const { envState } = useEnvStore();
 
   const todoUpdate = async (props: Readonly<Props>) => {
@@ -36,6 +37,7 @@ export default function useTodoUpdate() {
       );
     }
 
+    setTodoState(updateTodo);
     setTodoListState({ ...todoListState, todoList: newTodoList });
   };
 

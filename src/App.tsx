@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import CreateTodo from "./component/CreateTodo";
 import FindOptionButton from "./component/FindOptionButton";
+import TodoCreate from "./component/TodoCreate";
 import TodoDetail from "./component/TodoDetail";
 import TodoList from "./component/TodoList";
 import useFetchTodoAll from "./hook/useFetchTodoAll";
@@ -11,7 +11,7 @@ export default function App() {
   const { fetchTodoAll } = useFetchTodoAll();
   const { todoSearch } = useTodoSearch();
 
-  const { todoListState, searchTodoListState } = useTodoStore();
+  const { todoState, todoListState, searchTodoListState } = useTodoStore();
 
   useEffect(() => {
     fetchTodoAll({ page: 1 });
@@ -19,8 +19,10 @@ export default function App() {
 
   // useEffect(() => {
   //   console.log("====================");
+  //   console.log("id : ", todoState.id);
   //   console.log("title : ", todoState.title);
   //   console.log("description : ", todoState.description);
+  //   console.log("done : ", todoState.isDone);
   //   console.log("startDate : ", todoState.startDate);
   //   console.log("endDate : ", todoState.endDate);
   // }, [todoState]);
@@ -31,7 +33,7 @@ export default function App() {
     <div className="text-customText relative mx-auto flex h-full w-1/3 justify-center py-8">
       <div className="flex h-full w-full flex-col">
         <nav className="ml-auto"> nav login</nav>
-        <CreateTodo />
+        <TodoCreate />
 
         <div className="mb-2 flex">
           <div className="flex gap-x-2">

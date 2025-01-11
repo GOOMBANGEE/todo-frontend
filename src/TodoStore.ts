@@ -25,8 +25,8 @@ const initialTodoState: TodoState = {
   title: undefined,
   description: undefined,
   isDone: undefined,
-  startDate: undefined,
-  endDate: undefined,
+  startDate: new Date().toISOString(),
+  endDate: new Date().toISOString(),
 };
 
 const initialTodoListState: TodoListState = {

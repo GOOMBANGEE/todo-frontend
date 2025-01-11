@@ -4,15 +4,13 @@ import "react-datepicker/dist/react-datepicker.css";
 import useTodoCreate from "../hook/useTodoCreate";
 import { useTodoStore } from "../TodoStore";
 
-export default function CreateTodo() {
+export default function TodoCreate() {
   const { todoCreate } = useTodoCreate();
   const { todoState, setTodoState, resetTodoState } = useTodoStore();
   const [createModalOpen, setCreateModalOpen] = useState<boolean>(false);
 
-  const startDate = todoState.startDate
-    ? new Date(todoState.startDate)
-    : new Date();
-  const endDate = todoState.endDate ? new Date(todoState.endDate) : undefined;
+  const startDate = new Date(todoState.startDate);
+  const endDate = new Date(todoState.endDate);
 
   const handleClickOutside = (e: MouseEvent) => {
     if (
@@ -56,7 +54,7 @@ export default function CreateTodo() {
             selected={startDate}
             onChange={(date: Date | null) => {
               setTodoState({
-                startDate: date ? date.toISOString() : undefined,
+                startDate: date ? date.toISOString() : new Date().toISOString(),
               });
             }}
             selectsStart
@@ -69,7 +67,7 @@ export default function CreateTodo() {
             selected={endDate}
             onChange={(date: Date | null) => {
               setTodoState({
-                endDate: date ? date.toISOString() : undefined,
+                endDate: date ? date.toISOString() : new Date().toISOString(),
               });
             }}
             selectsEnd

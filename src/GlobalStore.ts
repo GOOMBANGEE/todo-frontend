@@ -2,15 +2,17 @@ import { create } from "zustand";
 
 interface GlobalStore {
   globalState: GlobalState;
-  setGlobalState: (set: GlobalState) => void;
+  setGlobalState: (set: Partial<GlobalState>) => void;
 }
 
 interface GlobalState {
   detail: boolean;
+  initialRender: boolean;
 }
 
 const initialGlobalState: GlobalState = {
   detail: false,
+  initialRender: false,
 };
 
 export const useGlobalStore = create<GlobalStore>((set) => ({

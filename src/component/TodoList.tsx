@@ -14,10 +14,11 @@ export default function TodoList(props: Readonly<Props>) {
   const { todoUpdate } = useTodoUpdate();
   const { todoDelete } = useTodoDelete();
   const { timeFormatMMDD } = useTimeFormat();
-  const { todoState, setTodoState } = useTodoStore();
+  const { setTodoState } = useTodoStore();
   const { setGlobalState } = useGlobalStore();
 
   const [isFocus, setIsFocus] = useState<boolean>(false);
+  const [focusId, setFocusId] = useState<number>();
 
   return (
     <>
@@ -25,11 +26,10 @@ export default function TodoList(props: Readonly<Props>) {
         <div
           key={todo.id}
           onMouseEnter={() => {
-            setTodoState({ id: todo.id });
             setIsFocus(true);
+            setFocusId(todo.id);
           }}
           onMouseLeave={() => {
-            setTodoState({ id: undefined });
             setIsFocus(false);
           }}
           className="border-customDark_6 mb-2 flex w-full gap-x-3 rounded border px-2 py-4"
@@ -56,10 +56,11 @@ export default function TodoList(props: Readonly<Props>) {
           <button
             onClick={() => {
               setTodoState(todo);
-              setGlobalState({ detail: true });
+              setGlobalState({ detail: true, initialRender: true });
             }}
             className="w-full cursor-pointer truncate"
           >
+            <div>{todo.id}</div>
             <div className="truncate text-start">{todo.title}</div>
 
             <div className="text-customGray_4 truncate text-start text-xs">
@@ -74,9 +75,9 @@ export default function TodoList(props: Readonly<Props>) {
           {/* delete */}
           <button
             onClick={() => {
-              todo.id ? todoDelete({ id: todo.id }) : null;
+              focusId ? todoDelete({ id: focusId }) : null;
             }}
-            className={`flex ${isFocus && todo.id === todoState.id ? "" : "hidden"}`}
+            className={`flex ${isFocus && todo.id === focusId ? "" : "hidden"}`}
           >
             <svg
               width="24px"
