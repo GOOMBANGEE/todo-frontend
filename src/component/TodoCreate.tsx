@@ -12,15 +12,17 @@ export default function TodoCreate() {
   const startDate = new Date(todoState.startDate);
   const endDate = new Date(todoState.endDate);
 
-  const handleClickOutside = (e: MouseEvent) => {
-    if (
-      createModalOpen &&
-      !(e.target as HTMLElement).closest(".todo-add-modal")
-    ) {
-      setCreateModalOpen(false);
-    }
-  };
   useEffect(() => {
+    resetTodoState();
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        createModalOpen &&
+        !(e.target as HTMLElement).closest(".todo-add-modal")
+      ) {
+        setCreateModalOpen(false);
+      }
+    };
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
