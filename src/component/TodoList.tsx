@@ -68,7 +68,7 @@ export default function TodoList(props: Readonly<Props>) {
             </div>
             <div className="text-start text-xs">
               {todo.startDate ? timeFormatMMDD({ time: todo.startDate }) : null}{" "}
-              ~{todo.endDate ? timeFormatMMDD({ time: todo.endDate }) : null}
+              ~ {todo.endDate ? timeFormatMMDD({ time: todo.endDate }) : null}
             </div>
           </button>
 
