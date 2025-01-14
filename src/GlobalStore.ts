@@ -8,11 +8,13 @@ interface GlobalStore {
 interface GlobalState {
   detail: boolean;
   initialRender: boolean;
+  loading: boolean;
 }
 
 const initialGlobalState: GlobalState = {
   detail: false,
   initialRender: false,
+  loading: false,
 };
 
 export const useGlobalStore = create<GlobalStore>((set) => ({

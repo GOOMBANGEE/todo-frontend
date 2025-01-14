@@ -1,30 +1,84 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TodoState } from "../..";
 import { useGlobalStore } from "../GlobalStore";
+import useFetchTodoAll from "../hook/useFetchTodoAll";
+import useFetchTodoDone from "../hook/useFetchTodoDone";
+import useFetchTodoInProgress from "../hook/useFetchTodoInProgress";
 import useTimeFormat from "../hook/useTimeFormat";
 import useTodoDelete from "../hook/useTodoDelete";
 import useTodoUpdate from "../hook/useTodoUpdate";
-import { useTodoStore } from "../TodoStore";
+import { FIND_OPTIONS, FindOption, useTodoStore } from "../TodoStore";
+import Loading from "./Loading";
 
 interface Props {
   todoList: TodoState[];
 }
 
 export default function TodoList(props: Readonly<Props>) {
+  const { fetchTodoAll } = useFetchTodoAll();
+  const { fetchTodoInProgress } = useFetchTodoInProgress();
+  const { fetchTodoDone } = useFetchTodoDone();
   const { todoUpdate } = useTodoUpdate();
   const { todoDelete } = useTodoDelete();
   const { timeFormatMMDD } = useTimeFormat();
-  const { setTodoState } = useTodoStore();
-  const { setGlobalState } = useGlobalStore();
+
+  const { findOption, setTodoState, todoListState } = useTodoStore();
+  const { globalState, setGlobalState } = useGlobalStore();
 
   const [isFocus, setIsFocus] = useState<boolean>(false);
   const [focusId, setFocusId] = useState<number>();
 
+  useEffect(() => {
+    if (props.todoList.length > 0) {
+      const lastTodoElement = document.getElementById(
+        `${props.todoList[props.todoList.length - 1].id}`,
+      );
+      if (lastTodoElement) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            if (
+              entries[0].isIntersecting &&
+              todoListState.totalPage > todoListState.currentPage
+            ) {
+              const fetchMap: Record<
+                FindOption,
+                (props: { page: number }) => Promise<void>
+              > = {
+                [FIND_OPTIONS.ALL]: fetchTodoAll,
+                [FIND_OPTIONS.IN_PROGRESS]: fetchTodoInProgress,
+                [FIND_OPTIONS.DONE]: fetchTodoDone,
+              };
+              const fetchFunction = fetchMap[findOption];
+
+              setGlobalState({ loading: true });
+              fetchFunction({ page: todoListState.currentPage + 1 });
+            }
+          },
+          {
+            root: null,
+            rootMargin: "0px",
+            threshold: 0.3,
+          },
+        );
+
+        observer.observe(lastTodoElement);
+
+        return () => {
+          observer.unobserve(lastTodoElement);
+        };
+      }
+    }
+  }, [todoListState]);
+
   return (
-    <>
+    <div
+      style={{ maxHeight: "calc(100vh - 180px)" }}
+      className="custom-scrollbar relative h-full overflow-y-auto"
+    >
       {props.todoList.map((todo: TodoState) => (
         <div
           key={todo.id}
+          id={`${todo.id}`}
           onMouseEnter={() => {
             setIsFocus(true);
             setFocusId(todo.id);
@@ -32,7 +86,7 @@ export default function TodoList(props: Readonly<Props>) {
           onMouseLeave={() => {
             setIsFocus(false);
           }}
-          className="border-customDark_6 mb-2 flex w-full gap-x-3 rounded border px-2 py-4"
+          className="mb-2 flex w-full gap-x-3 rounded border border-customDark_6 px-2 py-4"
         >
           {/* done check */}
           <button
@@ -63,7 +117,7 @@ export default function TodoList(props: Readonly<Props>) {
             <div>{todo.id}</div>
             <div className="truncate text-start">{todo.title}</div>
 
-            <div className="text-customGray_4 truncate text-start text-xs">
+            <div className="truncate text-start text-xs text-customGray_4">
               {todo.description}
             </div>
             <div className="text-start text-xs">
@@ -75,7 +129,7 @@ export default function TodoList(props: Readonly<Props>) {
           {/* delete */}
           <button
             onClick={() => {
-              focusId ? todoDelete({ id: focusId }) : null;
+              if (focusId) todoDelete({ id: focusId });
             }}
             className={`flex ${isFocus && todo.id === focusId ? "" : "hidden"}`}
           >
@@ -105,6 +159,7 @@ export default function TodoList(props: Readonly<Props>) {
           </button>
         </div>
       ))}
-    </>
+      {globalState.loading ? <Loading /> : null}
+    </div>
   );
 }
