@@ -9,6 +9,7 @@ import useTodoDelete from "../hook/useTodoDelete";
 import useTodoUpdate from "../hook/useTodoUpdate";
 import { FIND_OPTIONS, FindOption, useTodoStore } from "../TodoStore";
 import Loading from "./Loading";
+import useTodoSearch from "../hook/useTodoSearch.ts";
 
 interface Props {
   todoList: TodoState[];
@@ -18,11 +19,18 @@ export default function TodoList(props: Readonly<Props>) {
   const { fetchTodoAll } = useFetchTodoAll();
   const { fetchTodoInProgress } = useFetchTodoInProgress();
   const { fetchTodoDone } = useFetchTodoDone();
+  const { todoSearch } = useTodoSearch();
   const { todoUpdate } = useTodoUpdate();
   const { todoDelete } = useTodoDelete();
   const { timeFormatMMDD } = useTimeFormat();
 
-  const { findOption, setTodoState, todoListState } = useTodoStore();
+  const {
+    findOption,
+    searchKeyword,
+    setTodoState,
+    todoListState,
+    todoSearchListState,
+  } = useTodoStore();
   const { globalState, setGlobalState } = useGlobalStore();
 
   const [isFocus, setIsFocus] = useState<boolean>(false);
@@ -37,6 +45,16 @@ export default function TodoList(props: Readonly<Props>) {
         const observer = new IntersectionObserver(
           (entries) => {
             if (
+              entries[0].isIntersecting &&
+              searchKeyword &&
+              todoSearchListState.totalPage > todoSearchListState.page
+            ) {
+              setGlobalState({ loading: true });
+              todoSearch({
+                keyword: searchKeyword,
+                page: todoSearchListState.page + 1,
+              });
+            } else if (
               entries[0].isIntersecting &&
               todoListState.totalPage > todoListState.page
             ) {
@@ -67,7 +85,7 @@ export default function TodoList(props: Readonly<Props>) {
         };
       }
     }
-  }, [todoListState]);
+  }, [todoListState, todoSearchListState]);
 
   return (
     <div
