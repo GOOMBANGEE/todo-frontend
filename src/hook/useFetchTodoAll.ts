@@ -17,7 +17,7 @@ export default function useFetchTodoAll() {
     const todoUrl = envState.todoUrl;
 
     try {
-      const response = await axios.get(`${todoUrl}?currentPage=${props.page}`);
+      const response = await axios.get(`${todoUrl}?page=${props.page}`);
 
       if (props.page === 1) {
         setTodoListState(response.data);

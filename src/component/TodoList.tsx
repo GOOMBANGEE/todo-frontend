@@ -38,7 +38,7 @@ export default function TodoList(props: Readonly<Props>) {
           (entries) => {
             if (
               entries[0].isIntersecting &&
-              todoListState.totalPage > todoListState.currentPage
+              todoListState.totalPage > todoListState.page
             ) {
               const fetchMap: Record<
                 FindOption,
@@ -51,7 +51,7 @@ export default function TodoList(props: Readonly<Props>) {
               const fetchFunction = fetchMap[findOption];
 
               setGlobalState({ loading: true });
-              fetchFunction({ page: todoListState.currentPage + 1 });
+              fetchFunction({ page: todoListState.page + 1 });
             }
           },
           {
@@ -60,7 +60,6 @@ export default function TodoList(props: Readonly<Props>) {
             threshold: 0.3,
           },
         );
-
         observer.observe(lastTodoElement);
 
         return () => {
@@ -114,7 +113,6 @@ export default function TodoList(props: Readonly<Props>) {
             }}
             className="w-full cursor-pointer truncate"
           >
-            <div>{todo.id}</div>
             <div className="truncate text-start">{todo.title}</div>
 
             <div className="truncate text-start text-xs text-customGray_4">

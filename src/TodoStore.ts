@@ -32,7 +32,7 @@ const initialTodoState: TodoState = {
 const initialTodoListState: TodoListState = {
   todoList: [],
   total: 0,
-  currentPage: 0,
+  page: 0,
   totalPage: 0,
 };
 

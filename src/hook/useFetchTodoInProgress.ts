@@ -17,7 +17,7 @@ export default function useFetchTodoInProgress() {
     const todoUrl = envState.todoUrl;
     try {
       const response = await axios.get(
-        `${todoUrl}/in-progress?currentPage=${props.page}`,
+        `${todoUrl}/in-progress?page=${props.page}`,
       );
 
       if (props.page === 1) {

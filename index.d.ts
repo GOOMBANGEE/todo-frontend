@@ -10,6 +10,6 @@ export interface TodoState {
 export interface TodoListState {
   todoList: TodoState[];
   total: number;
-  currentPage: number;
+  page: number;
   totalPage: number;
 }
