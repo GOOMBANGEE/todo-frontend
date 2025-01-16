@@ -8,18 +8,30 @@ interface Props {
 }
 
 export default function useTodoDelete() {
-  const { todoListState, setTodoListState } = useTodoStore();
+  const {
+    searchKeyword,
+    todoListState,
+    setTodoListState,
+    todoSearchListState,
+    setTodoSearchListState,
+  } = useTodoStore();
   const { envState } = useEnvStore();
 
   const todoDelete = async (props: Readonly<Props>) => {
     const todoUrl = envState.todoUrl;
     await axios.delete(`${todoUrl}/${props.id}`);
 
-    const newTodoList: TodoState[] = todoListState.todoList.filter(
-      (todo) => todo.id !== props.id,
-    );
+    const filterTodoList = (todoList: TodoState[]): TodoState[] => {
+      return todoList.filter((todo) => todo.id !== props.id);
+    };
 
-    setTodoListState({ ...todoListState, todoList: newTodoList });
+    if (searchKeyword) {
+      const newTodoList = filterTodoList(todoSearchListState.todoList);
+      setTodoSearchListState({ ...todoSearchListState, todoList: newTodoList });
+    } else {
+      const newTodoList = filterTodoList(todoListState.todoList);
+      setTodoListState({ ...todoListState, todoList: newTodoList });
+    }
   };
 
   return { todoDelete };
