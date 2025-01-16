@@ -1,31 +1,51 @@
 import axios from "axios";
-import { TodoListState } from "../..";
+import { TodoState } from "../..";
 import { useEnvStore } from "../EnvStore";
 import { useGlobalStore } from "../GlobalStore";
 import { useTodoStore } from "../TodoStore";
 
 interface Props {
   keyword: string;
-  currentPage?: number;
+  page: number;
 }
 
 export default function useTodoSearch() {
-  const { setTodoSearchListState } = useTodoStore();
+  const { findOption, todoSearchListState, setTodoSearchListState } =
+    useTodoStore();
   const { setGlobalState } = useGlobalStore();
   const { envState } = useEnvStore();
 
   const todoSearch = async (props: Readonly<Props>) => {
-    const todoUrl = envState.todoUrl;
+    try {
+      const todoUrl = envState.todoUrl;
 
-    const data = {
-      keyword: props.keyword,
-      currentPage: props.currentPage ?? 1,
-    };
-    const response = await axios.post(`${todoUrl}/search`, data);
+      const data = {
+        keyword: props.keyword,
+        option: findOption,
+      };
 
-    const todoListState: TodoListState = response.data;
-    setTodoSearchListState(todoListState);
-    setGlobalState({ loading: false });
+      const response = await axios.post(
+        `${todoUrl}/search?page=${props.page}`,
+        data,
+      );
+      if (props.page === 1) {
+        setTodoSearchListState(response.data);
+      } else {
+        const newTodoList: TodoState[] = [
+          ...todoSearchListState.todoList,
+          ...response.data.todoList,
+        ];
+
+        setTodoSearchListState({
+          ...response.data,
+          todoList: newTodoList,
+        });
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setGlobalState({ loading: false });
+    }
   };
   return { todoSearch };
 }

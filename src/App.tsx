@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import FindOptionButton from "./component/FindOptionButton";
 import TodoCreate from "./component/TodoCreate";
 import TodoDetail from "./component/TodoDetail";
@@ -12,10 +12,13 @@ import { FIND_OPTIONS, useTodoStore } from "./TodoStore";
 export default function App() {
   const { fetchTodoAll } = useFetchTodoAll();
   const { todoSearch } = useTodoSearch();
-  const { todoListState, todoSearchListState } = useTodoStore();
+  const {
+    searchKeyword,
+    setSearchKeyword,
+    todoListState,
+    todoSearchListState,
+  } = useTodoStore();
   const { setGlobalState } = useGlobalStore();
-
-  const [searchKeyword, setSearchKeyword] = useState<string>("");
 
   useEffect(() => {
     setGlobalState({ loading: true });
@@ -26,7 +29,7 @@ export default function App() {
   useEffect(() => {
     if (searchKeyword) {
       setGlobalState({ loading: true });
-      todoSearch({ keyword: debouncedKeyword });
+      todoSearch({ keyword: debouncedKeyword, page: 1 });
     }
   }, [debouncedKeyword]);
 

@@ -4,6 +4,8 @@ import { TodoListState, TodoState } from "..";
 interface TodoStore {
   findOption: FindOption;
   setFindOption: (state: FindOption) => void;
+  searchKeyword: string;
+  setSearchKeyword: (state: string) => void;
   todoState: TodoState;
   setTodoState: (state: Partial<TodoState>) => void;
   resetTodoState: () => void;
@@ -39,6 +41,9 @@ const initialTodoListState: TodoListState = {
 export const useTodoStore = create<TodoStore>((set) => ({
   findOption: FIND_OPTIONS.ALL,
   setFindOption: (state) => set({ findOption: state }),
+
+  searchKeyword: "",
+  setSearchKeyword: (state) => set({ searchKeyword: state }),
 
   todoState: initialTodoState,
   setTodoState: (state) =>
