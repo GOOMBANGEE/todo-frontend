@@ -19,15 +19,19 @@ export default function useFetchTodoAll() {
     try {
       const response = await axios.get(`${todoUrl}?currentPage=${props.page}`);
 
-      const newTodoList: TodoState[] = [
-        ...todoListState.todoList,
-        ...response.data.todoList,
-      ];
+      if (props.page === 1) {
+        setTodoListState(response.data);
+      } else {
+        const newTodoList: TodoState[] = [
+          ...todoListState.todoList,
+          ...response.data.todoList,
+        ];
 
-      setTodoListState({
-        ...response.data,
-        todoList: newTodoList,
-      });
+        setTodoListState({
+          ...response.data,
+          todoList: newTodoList,
+        });
+      }
     } catch (err) {
       console.log(err);
     } finally {

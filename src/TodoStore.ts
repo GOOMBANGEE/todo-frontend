@@ -9,8 +9,8 @@ interface TodoStore {
   resetTodoState: () => void;
   todoListState: TodoListState;
   setTodoListState: (state: TodoListState) => void;
-  searchTodoListState: TodoListState;
-  setSearchTodoListState: (state: TodoListState) => void;
+  todoSearchListState: TodoListState;
+  setTodoSearchListState: (state: TodoListState) => void;
 }
 
 export const FIND_OPTIONS = {
@@ -39,16 +39,19 @@ const initialTodoListState: TodoListState = {
 export const useTodoStore = create<TodoStore>((set) => ({
   findOption: FIND_OPTIONS.ALL,
   setFindOption: (state) => set({ findOption: state }),
+
   todoState: initialTodoState,
   setTodoState: (state) =>
     set((prev) => ({ todoState: { ...prev.todoState, ...state } })),
   resetTodoState: () => set({ todoState: initialTodoState }),
+
   todoListState: initialTodoListState,
   setTodoListState: (state) =>
     set((prev) => ({ todoListState: { ...prev.todoListState, ...state } })),
-  searchTodoListState: initialTodoListState,
-  setSearchTodoListState: (state) =>
+
+  todoSearchListState: initialTodoListState,
+  setTodoSearchListState: (state) =>
     set((prev) => ({
-      searchTodoListState: { ...prev.searchTodoListState, ...state },
+      todoSearchListState: { ...prev.todoSearchListState, ...state },
     })),
 }));

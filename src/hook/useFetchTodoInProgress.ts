@@ -1,5 +1,7 @@
 import axios from "axios";
+import { TodoState } from "../..";
 import { useEnvStore } from "../EnvStore";
+import { useGlobalStore } from "../GlobalStore";
 import { useTodoStore } from "../TodoStore";
 
 interface Props {
@@ -7,7 +9,8 @@ interface Props {
 }
 
 export default function useFetchTodoInProgress() {
-  const { setTodoListState } = useTodoStore();
+  const { todoListState, setTodoListState } = useTodoStore();
+  const { setGlobalState } = useGlobalStore();
   const { envState } = useEnvStore();
 
   const fetchTodoInProgress = async (props: Readonly<Props>) => {
@@ -16,9 +19,24 @@ export default function useFetchTodoInProgress() {
       const response = await axios.get(
         `${todoUrl}/in-progress?currentPage=${props.page}`,
       );
-      setTodoListState(response.data);
+
+      if (props.page === 1) {
+        setTodoListState(response.data);
+      } else {
+        const newTodoList: TodoState[] = [
+          ...todoListState.todoList,
+          ...response.data.todoList,
+        ];
+
+        setTodoListState({
+          ...response.data,
+          todoList: newTodoList,
+        });
+      }
     } catch (err) {
       console.log(err);
+    } finally {
+      setGlobalState({ loading: false });
     }
   };
 

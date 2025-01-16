@@ -1,6 +1,7 @@
 import axios from "axios";
 import { TodoListState } from "../..";
 import { useEnvStore } from "../EnvStore";
+import { useGlobalStore } from "../GlobalStore";
 import { useTodoStore } from "../TodoStore";
 
 interface Props {
@@ -9,7 +10,8 @@ interface Props {
 }
 
 export default function useTodoSearch() {
-  const { setSearchTodoListState } = useTodoStore();
+  const { setTodoSearchListState } = useTodoStore();
+  const { setGlobalState } = useGlobalStore();
   const { envState } = useEnvStore();
 
   const todoSearch = async (props: Readonly<Props>) => {
@@ -17,12 +19,13 @@ export default function useTodoSearch() {
 
     const data = {
       keyword: props.keyword,
-      currentPage: props.currentPage || 1,
+      currentPage: props.currentPage ?? 1,
     };
     const response = await axios.post(`${todoUrl}/search`, data);
 
     const todoListState: TodoListState = response.data;
-    setSearchTodoListState(todoListState);
+    setTodoSearchListState(todoListState);
+    setGlobalState({ loading: false });
   };
   return { todoSearch };
 }
