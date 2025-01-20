@@ -12,6 +12,7 @@ import { useTokenStore } from "./store/TokenStore.tsx";
 import AuthButton from "./component/user/AuthButton.tsx";
 import RegisterModal from "./component/user/RegisterModal.tsx";
 import TodoSearch from "./component/todo/TodoSearch.tsx";
+import UserSetting from "./component/user/UserSetting.tsx";
 
 export default function App() {
   const { refreshAccessToken } = useRefreshAccessToken();
@@ -35,6 +36,7 @@ export default function App() {
     <div className="relative mx-auto flex h-full w-1/3 justify-center py-8 text-customText">
       <div className="flex h-full w-full flex-col">
         <AuthButton />
+        <UserSetting />
         <LoginModal />
         <RegisterModal />
 
