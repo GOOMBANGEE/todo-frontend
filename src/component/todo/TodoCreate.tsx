@@ -1,24 +1,71 @@
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import useTodoCreate from "../../hook/todo/useTodoCreate.ts";
 import { useTodoStore } from "../../store/TodoStore.ts";
+import { useTokenStore } from "../../store/TokenStore.tsx";
+import useRegister from "../../hook/user/useRegister.ts";
+import useRefreshAccessToken from "../../hook/useRefreshAccessToken.tsx";
 
 export default function TodoCreate() {
   const { todoCreate } = useTodoCreate();
+  const { register } = useRegister();
+  const { refreshAccessToken } = useRefreshAccessToken();
+
   const { todoState, setTodoState, resetTodoState } = useTodoStore();
+  const { tokenState } = useTokenStore();
+
   const [createModalOpen, setCreateModalOpen] = useState<boolean>(false);
+  const [anonymousRegister, setAnonymousRegister] = useState(false);
+  const titleRef = useRef<HTMLInputElement>(null);
 
   const startDate = new Date(todoState.startDate);
   const endDate = new Date(todoState.endDate);
 
+  // modal open
+  const handleClickModalOpen = () => {
+    setCreateModalOpen(true);
+    setTodoState({
+      startDate: new Date().toISOString(),
+      endDate: new Date().toISOString(),
+    });
+  };
+
+  // modal open focus
+  useEffect(() => {
+    if (createModalOpen) titleRef.current?.focus();
+  }, [createModalOpen]);
+
+  // todo create
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (tokenState.accessToken) {
+      todoCreate();
+      setCreateModalOpen(false);
+    } else if (await register({ username: "anonymous" })) {
+      // 비회원인 경우 익명회원가입 절차 후 create 실행
+      refreshAccessToken();
+    }
+  };
+
+  // 비회원인 경우 익명회원가입 절차 후 create 실행
+  useEffect(() => {
+    if (tokenState.accessToken && todoState.title) setAnonymousRegister(true);
+  }, [tokenState.accessToken]);
+  useEffect(() => {
+    if (anonymousRegister) {
+      todoCreate();
+      setCreateModalOpen(false);
+      setAnonymousRegister(false);
+    }
+  }, [anonymousRegister]);
+
   useEffect(() => {
     resetTodoState();
-
     const handleClickOutside = (e: MouseEvent) => {
       if (
         createModalOpen &&
-        !(e.target as HTMLElement).closest(".todo-add-modal")
+        !(e.target as HTMLElement).closest(".todo-create-modal")
       ) {
         setCreateModalOpen(false);
       }
@@ -32,81 +79,79 @@ export default function TodoCreate() {
   return (
     <>
       {createModalOpen ? (
-        <div className="todo-add-modal mb-4 flex flex-col rounded border border-customDark_6 px-2 py-2 text-start">
-          // todo
-          {/* // create todo click -> focus hidden modal todo title */}
-          {/* title */}
-          <input
-            onChange={(e) => {
-              setTodoState({ title: e.target.value });
-            }}
-            placeholder="title"
-            className="bg-customDark_3 text-customText"
-          />
-          {/* description */}
-          <input
-            onChange={(e) => {
-              setTodoState({ description: e.target.value });
-            }}
-            placeholder="description"
-            className="bg-customDark_3 text-customText"
-          />
-          <DatePicker
-            className="bg-customDark_3 text-customText"
-            selected={startDate}
-            onChange={(date: Date | null) => {
-              setTodoState({
-                startDate: date ? date.toISOString() : new Date().toISOString(),
-              });
-            }}
-            selectsStart
-            startDate={startDate}
-            endDate={endDate}
-            dateFormat="yyyy-MM-dd"
-          />
-          <DatePicker
-            className="bg-customDark_3 text-customText"
-            selected={endDate}
-            onChange={(date: Date | null) => {
-              setTodoState({
-                endDate: date ? date.toISOString() : new Date().toISOString(),
-              });
-            }}
-            selectsEnd
-            startDate={startDate}
-            endDate={endDate}
-            minDate={startDate} // 시작 날짜 이후로만 선택 가능
-            dateFormat="yyyy-MM-dd"
-            placeholderText="Select end date"
-          />
-          <div className="flex justify-end gap-x-2">
-            <button
-              onClick={() => {
-                todoCreate();
-                setCreateModalOpen(false);
+        <div className="todo-create-modal mb-4 flex flex-col rounded border border-customDark_6 px-2 py-2 text-start">
+          <form onSubmit={(e) => handleSubmit(e)}>
+            {/* title */}
+            <input
+              ref={titleRef}
+              onChange={(e) => {
+                setTodoState({ title: e.target.value });
               }}
-            >
-              Save
-            </button>
-            <button
-              onClick={() => {
-                setCreateModalOpen(false);
-                resetTodoState();
+              placeholder="title"
+              className="bg-customDark_3 text-customText"
+            />
+
+            {/* description */}
+            <input
+              onChange={(e) => {
+                setTodoState({ description: e.target.value });
               }}
-            >
-              Cancel
-            </button>
-          </div>
+              placeholder="description"
+              className="bg-customDark_3 text-customText"
+            />
+
+            {/* startDate */}
+            <DatePicker
+              className="bg-customDark_3 text-customText"
+              selected={startDate}
+              onChange={(date: Date | null) => {
+                setTodoState({
+                  startDate: date
+                    ? date.toISOString()
+                    : new Date().toISOString(),
+                });
+              }}
+              selectsStart
+              startDate={startDate}
+              endDate={endDate}
+              dateFormat="YYYY-MM-DD"
+            />
+
+            {/* endDate */}
+            <DatePicker
+              className="bg-customDark_3 text-customText"
+              selected={endDate}
+              onChange={(date: Date | null) => {
+                setTodoState({
+                  endDate: date ? date.toISOString() : new Date().toISOString(),
+                });
+              }}
+              selectsEnd
+              startDate={startDate}
+              endDate={endDate}
+              minDate={startDate} // 시작 날짜 이후로만 선택 가능
+              dateFormat="YYYY-MM-DD"
+              placeholderText="Select end date"
+            />
+
+            {/* save, cancel button */}
+            <div className="flex justify-end gap-x-2">
+              <button type={"submit"}>Save</button>
+              <button
+                type={"reset"}
+                onClick={() => {
+                  setCreateModalOpen(false);
+                  resetTodoState();
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
         </div>
       ) : (
         <button
-          onClick={() => {
-            setCreateModalOpen(true);
-            setTodoState({
-              startDate: new Date().toISOString(),
-              endDate: new Date().toISOString(),
-            });
-          }}
+          onClick={handleClickModalOpen}
           className={`mb-4 cursor-text rounded border border-customDark_6 px-2 py-2 text-start`}
         >
           create todo...
