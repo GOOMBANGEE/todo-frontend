@@ -14,8 +14,6 @@ interface UserState {
   // register
   registerModalOpen: boolean;
   confirmPassword: string | undefined;
-  usernameVerified: boolean;
-  passwordVerified: boolean;
   usernameErrorMessage: string | undefined;
   passwordErrorMessage: string | undefined;
 
@@ -23,10 +21,8 @@ interface UserState {
   loginModalOpen: boolean;
   loginErrorMessage: string | undefined;
 
-  // profile setting
+  // user setting
   userSettingOpen: boolean;
-  userSettingLogoutModal: boolean;
-  userSettingDeleteUserModal: boolean;
   newPassword: string | undefined;
   newConfirmPassword: string | undefined;
 }
@@ -39,8 +35,6 @@ const initialUserState: UserState = {
   // register
   registerModalOpen: false,
   confirmPassword: undefined,
-  usernameVerified: false,
-  passwordVerified: false,
   usernameErrorMessage: undefined,
   passwordErrorMessage: undefined,
 
@@ -48,10 +42,8 @@ const initialUserState: UserState = {
   loginModalOpen: false,
   loginErrorMessage: undefined,
 
-  // profile setting
+  // user setting
   userSettingOpen: false,
-  userSettingLogoutModal: false,
-  userSettingDeleteUserModal: false,
   newPassword: undefined,
   newConfirmPassword: undefined,
 };

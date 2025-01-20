@@ -2,22 +2,32 @@ import useLogin from "../../hook/user/useLogin.ts";
 import { useUserStore } from "../../store/UserStore.tsx";
 import { FormEvent, useEffect } from "react";
 import useRefreshAccessToken from "../../hook/useRefreshAccessToken.tsx";
+import useUsernameRegex from "../../hook/user/useUsernameRegex.ts";
+import usePasswordRegex from "../../hook/user/usePasswordRegex.ts";
+import ErrorMessage from "../ErrorMessage.tsx";
 
 export default function LoginModal() {
+  const { usernameRegex } = useUsernameRegex();
+  const { passwordRegex } = usePasswordRegex();
   const { login } = useLogin();
   const { refreshAccessToken } = useRefreshAccessToken();
   const { userState, setUserState, resetUserState } = useUserStore();
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    handleClickLogin();
-  };
+    // 유효성검사
+    if (!usernameRegex()) return;
+    if (!passwordRegex({ password: userState.password ?? "" })) return;
 
-  const handleClickLogin = async () => {
     if (await login()) {
       refreshAccessToken();
       setUserState({ loginModalOpen: false });
+      return;
     }
+
+    setUserState({
+      loginErrorMessage: "유효하지 않은 유저명 또는 비밀번호입니다",
+    });
   };
 
   const handleClickRegister = () => {
@@ -53,7 +63,13 @@ export default function LoginModal() {
               <input
                 placeholder={"username"}
                 value={userState.username ?? ""}
-                onChange={(e) => setUserState({ username: e.target.value })}
+                onChange={(e) =>
+                  setUserState({
+                    username: e.target.value,
+                    usernameErrorMessage: undefined,
+                    loginErrorMessage: undefined,
+                  })
+                }
                 className={"bg-customDark_6 text-customText"}
               />
             </li>
@@ -64,7 +80,13 @@ export default function LoginModal() {
                 type={"password"}
                 placeholder={"password"}
                 value={userState.password ?? ""}
-                onChange={(e) => setUserState({ password: e.target.value })}
+                onChange={(e) =>
+                  setUserState({
+                    password: e.target.value,
+                    passwordErrorMessage: undefined,
+                    loginErrorMessage: undefined,
+                  })
+                }
                 className={"bg-customDark_3 text-customText"}
               />
             </li>
@@ -77,7 +99,13 @@ export default function LoginModal() {
             </li>
           </ul>
         </form>
-        {/* register button */}
+
+        {/* error message */}
+        <ErrorMessage message={userState.usernameErrorMessage} />
+        <ErrorMessage message={userState.passwordErrorMessage} />
+        <ErrorMessage message={userState.loginErrorMessage} />
+
+        {/* register modal button */}
         <div className="text-sm">
           <button onClick={handleClickRegister} className={"rounded"}>
             Register

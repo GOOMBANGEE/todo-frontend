@@ -6,6 +6,7 @@ import { useTodoStore } from "../../store/TodoStore.ts";
 import { useTokenStore } from "../../store/TokenStore.tsx";
 import useRegister from "../../hook/user/useRegister.ts";
 import useRefreshAccessToken from "../../hook/useRefreshAccessToken.tsx";
+import ErrorMessage from "../ErrorMessage.tsx";
 
 export default function TodoCreate() {
   const { todoCreate } = useTodoCreate();
@@ -17,6 +18,7 @@ export default function TodoCreate() {
 
   const [createModalOpen, setCreateModalOpen] = useState<boolean>(false);
   const [anonymousRegister, setAnonymousRegister] = useState(false);
+  const [titleErrorMessage, setTitleErrorMessage] = useState<string>();
   const titleRef = useRef<HTMLInputElement>(null);
 
   const startDate = new Date(todoState.startDate);
@@ -39,6 +41,11 @@ export default function TodoCreate() {
   // todo create
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (!todoState.title) {
+      setTitleErrorMessage("제목이 비어있습니다");
+      return;
+    }
+
     if (tokenState.accessToken) {
       todoCreate();
       setCreateModalOpen(false);
@@ -60,6 +67,7 @@ export default function TodoCreate() {
     }
   }, [anonymousRegister]);
 
+  // click outside
   useEffect(() => {
     resetTodoState();
     const handleClickOutside = (e: MouseEvent) => {
@@ -68,6 +76,7 @@ export default function TodoCreate() {
         !(e.target as HTMLElement).closest(".todo-create-modal")
       ) {
         setCreateModalOpen(false);
+        setTitleErrorMessage(undefined);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -86,6 +95,7 @@ export default function TodoCreate() {
               ref={titleRef}
               onChange={(e) => {
                 setTodoState({ title: e.target.value });
+                setTitleErrorMessage(undefined);
               }}
               placeholder="title"
               className="bg-customDark_3 text-customText"
@@ -133,6 +143,9 @@ export default function TodoCreate() {
               dateFormat="YYYY-MM-DD"
               placeholderText="Select end date"
             />
+
+            {/* error message */}
+            <ErrorMessage message={titleErrorMessage} />
 
             {/* save, cancel button */}
             <div className="flex justify-end gap-x-2">

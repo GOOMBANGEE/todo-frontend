@@ -2,8 +2,13 @@ import { useUserStore } from "../../store/UserStore.tsx";
 import { FormEvent, useEffect } from "react";
 import useRegister from "../../hook/user/useRegister.ts";
 import useRefreshAccessToken from "../../hook/useRefreshAccessToken.tsx";
+import useUsernameRegex from "../../hook/user/useUsernameRegex.ts";
+import usePasswordRegex from "../../hook/user/usePasswordRegex.ts";
+import ErrorMessage from "../ErrorMessage.tsx";
 
 export default function RegisterModal() {
+  const { usernameRegex } = useUsernameRegex();
+  const { passwordRegex } = usePasswordRegex();
   const { register } = useRegister();
   const { refreshAccessToken } = useRefreshAccessToken();
   const { userState, setUserState, resetUserState } = useUserStore();
@@ -14,6 +19,14 @@ export default function RegisterModal() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    // 유효성검사
+    if (!usernameRegex()) return;
+    if (!passwordRegex({ password: userState.password ?? "" })) return;
+    if (userState.password !== userState.confirmPassword) {
+      setUserState({ passwordErrorMessage: "비밀번호가 일치하지 않습니다" });
+      return;
+    }
+
     if (await register()) {
       refreshAccessToken();
       setUserState({ registerModalOpen: false });
@@ -49,7 +62,12 @@ export default function RegisterModal() {
               <input
                 placeholder={"username"}
                 value={userState.username ?? ""}
-                onChange={(e) => setUserState({ username: e.target.value })}
+                onChange={(e) =>
+                  setUserState({
+                    username: e.target.value,
+                    usernameErrorMessage: undefined,
+                  })
+                }
                 className={"bg-customDark_6 text-customText"}
               />
             </li>
@@ -60,7 +78,12 @@ export default function RegisterModal() {
                 type={"password"}
                 placeholder={"password"}
                 value={userState.password ?? ""}
-                onChange={(e) => setUserState({ password: e.target.value })}
+                onChange={(e) =>
+                  setUserState({
+                    password: e.target.value,
+                    passwordErrorMessage: undefined,
+                  })
+                }
                 className={"bg-customDark_3 text-customText"}
               />
             </li>
@@ -72,7 +95,10 @@ export default function RegisterModal() {
                 placeholder={"confirm password"}
                 value={userState.confirmPassword ?? ""}
                 onChange={(e) =>
-                  setUserState({ confirmPassword: e.target.value })
+                  setUserState({
+                    confirmPassword: e.target.value,
+                    passwordErrorMessage: undefined,
+                  })
                 }
                 className={"bg-customDark_3 text-customText"}
               />
@@ -87,7 +113,11 @@ export default function RegisterModal() {
           </ul>
         </form>
 
-        {/* login button */}
+        {/* error message */}
+        <ErrorMessage message={userState.usernameErrorMessage} />
+        <ErrorMessage message={userState.passwordErrorMessage} />
+
+        {/* login modal button */}
         <div className="text-sm">
           <button onClick={handleClickLogin} className={"rounded"}>
             Login
