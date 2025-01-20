@@ -1,35 +1,31 @@
-import useLogin from "../../hook/user/useLogin.ts";
 import { useUserStore } from "../../store/UserStore.tsx";
 import { FormEvent, useEffect } from "react";
+import useRegister from "../../hook/user/useRegister.ts";
 import useRefreshAccessToken from "../../hook/useRefreshAccessToken.tsx";
 
-export default function LoginModal() {
-  const { login } = useLogin();
+export default function RegisterModal() {
+  const { register } = useRegister();
   const { refreshAccessToken } = useRefreshAccessToken();
   const { userState, setUserState, resetUserState } = useUserStore();
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleClickLogin = () => {
+    setUserState({ loginModalOpen: true, registerModalOpen: false });
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    handleClickLogin();
-  };
-
-  const handleClickLogin = async () => {
-    if (await login()) {
+    if (await register()) {
       refreshAccessToken();
-      setUserState({ loginModalOpen: false });
+      setUserState({ registerModalOpen: false });
     }
-  };
-
-  const handleClickRegister = () => {
-    setUserState({ loginModalOpen: false, registerModalOpen: true });
   };
 
   // click outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
-        userState.loginModalOpen &&
-        !(e.target as HTMLElement).closest(".login-modal")
+        userState.registerModalOpen &&
+        !(e.target as HTMLElement).closest(".register-modal")
       ) {
         resetUserState();
       }
@@ -38,16 +34,16 @@ export default function LoginModal() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [userState, userState.loginModalOpen]);
+  }, [userState, userState.registerModalOpen]);
 
   return (
     <div
-      className={`fixed inset-0 flex h-full w-full items-center justify-center ${userState.loginModalOpen ? "" : "hidden"}`}
+      className={`fixed inset-0 flex h-full w-full items-center justify-center ${userState.registerModalOpen ? "" : "hidden"}`}
     >
       <div className="fixed inset-0 h-full w-full bg-customDark_3 opacity-70"></div>
-      <div className="login-modal z-10 rounded bg-customDark_6 px-6 py-4">
-        <form onSubmit={(e) => handleSubmit(e)}>
-          <ul>
+      <div className="register-modal z-10 rounded bg-customDark_6 px-6 py-4">
+        <form onSubmit={handleSubmit}>
+          <ul className="flex w-full flex-col gap-y-2">
             {/* username */}
             <li className="mb-2 flex">
               <input
@@ -69,18 +65,32 @@ export default function LoginModal() {
               />
             </li>
 
-            {/* login button */}
+            {/* password confirm */}
+            <li className="mb-2">
+              <input
+                type={"password"}
+                placeholder={"confirm password"}
+                value={userState.confirmPassword ?? ""}
+                onChange={(e) =>
+                  setUserState({ confirmPassword: e.target.value })
+                }
+                className={"bg-customDark_3 text-customText"}
+              />
+            </li>
+
+            {/* register button */}
             <li className="text-sm">
               <button type={"submit"} className={"rounded"}>
-                Login
+                Register
               </button>
             </li>
           </ul>
         </form>
-        {/* register button */}
+
+        {/* login button */}
         <div className="text-sm">
-          <button onClick={handleClickRegister} className={"rounded"}>
-            Register
+          <button onClick={handleClickLogin} className={"rounded"}>
+            Login
           </button>
         </div>
       </div>
