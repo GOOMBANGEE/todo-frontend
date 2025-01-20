@@ -1,15 +1,23 @@
 import { useEffect } from "react";
-import FindOptionButton from "./component/FindOptionButton";
-import TodoCreate from "./component/TodoCreate";
-import TodoDetail from "./component/TodoDetail";
-import TodoList from "./component/TodoList";
-import { useGlobalStore } from "./GlobalStore";
+import FindOptionButton from "./component/todo/FindOptionButton.tsx";
+import TodoCreate from "./component/todo/TodoCreate.tsx";
+import TodoDetail from "./component/todo/TodoDetail.tsx";
+import TodoList from "./component/todo/TodoList.tsx";
+import { useGlobalStore } from "./store/GlobalStore.ts";
 import useDebounce from "./hook/useDebounce";
 import useFetchTodoAll from "./hook/useFetchTodoAll";
 import useTodoSearch from "./hook/useTodoSearch";
 import { FIND_OPTIONS, useTodoStore } from "./TodoStore";
+import useFetchTodoAll from "./hook/todo/useFetchTodoAll.ts";
+import useTodoSearch from "./hook/todo/useTodoSearch.ts";
+import { FIND_OPTIONS, useTodoStore } from "./store/TodoStore.ts";
+import LoginModal from "./component/user/LoginModal.tsx";
+import useRefreshAccessToken from "./hook/useRefreshAccessToken.tsx";
+import { useTokenStore } from "./store/TokenStore.tsx";
+import AuthButton from "./component/user/AuthButton.tsx";
 
 export default function App() {
+  const { refreshAccessToken } = useRefreshAccessToken();
   const { fetchTodoAll } = useFetchTodoAll();
   const { todoSearch } = useTodoSearch();
   const {
@@ -18,12 +26,19 @@ export default function App() {
     todoListState,
     todoSearchListState,
   } = useTodoStore();
+  const { tokenState } = useTokenStore();
   const { setGlobalState } = useGlobalStore();
 
   useEffect(() => {
-    setGlobalState({ loading: true });
-    fetchTodoAll({ page: 1 });
+    refreshAccessToken();
   }, []);
+
+  useEffect(() => {
+    if (tokenState.accessToken) {
+      setGlobalState({ loading: true });
+      fetchTodoAll({ page: 1 });
+    }
+  }, [tokenState.accessToken]);
 
   const debouncedKeyword = useDebounce(searchKeyword, 200);
   useEffect(() => {
@@ -37,8 +52,10 @@ export default function App() {
     <div className="relative mx-auto flex h-full w-1/3 justify-center py-8 text-customText">
       <div className="flex h-full w-full flex-col">
         <nav className="ml-auto"> nav login</nav>
-        <TodoCreate />
+        <AuthButton />
+        <LoginModal />
 
+        <TodoCreate />
         <div className="mb-2 flex">
           <div className="flex gap-x-2">
             <FindOptionButton option={FIND_OPTIONS.ALL} />
