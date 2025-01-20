@@ -1,8 +1,8 @@
 import axios from "axios";
-import { TodoState } from "../..";
-import { useEnvStore } from "../EnvStore";
-import { useGlobalStore } from "../GlobalStore";
-import { useTodoStore } from "../TodoStore";
+import { TodoState } from "../../../index";
+import { useEnvStore } from "../../store/EnvStore.ts";
+import { useGlobalStore } from "../../store/GlobalStore.ts";
+import { useTodoStore } from "../../store/TodoStore.ts";
 
 interface Props {
   keyword: string;

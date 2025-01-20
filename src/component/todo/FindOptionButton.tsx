@@ -1,9 +1,13 @@
 import { useEffect } from "react";
-import useFetchTodoAll from "../hook/useFetchTodoAll";
-import useFetchTodoDone from "../hook/useFetchTodoDone";
-import useFetchTodoInProgress from "../hook/useFetchTodoInProgress";
-import { FIND_OPTIONS, FindOption, useTodoStore } from "../TodoStore";
-import useTodoSearch from "../hook/useTodoSearch.ts";
+import useFetchTodoAll from "../../hook/todo/useFetchTodoAll.ts";
+import useFetchTodoDone from "../../hook/todo/useFetchTodoDone.ts";
+import useFetchTodoInProgress from "../../hook/todo/useFetchTodoInProgress.ts";
+import {
+  FIND_OPTIONS,
+  FindOption,
+  useTodoStore,
+} from "../../store/TodoStore.ts";
+import useTodoSearch from "../../hook/todo/useTodoSearch.ts";
 
 interface Props {
   option: FindOption;

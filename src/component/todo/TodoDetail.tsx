@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import DatePicker from "react-datepicker";
-import { TodoState } from "../..";
-import { useGlobalStore } from "../GlobalStore";
-import { useTodoStore } from "../TodoStore";
-import useDebounce from "../hook/useDebounce";
-import useTodoDelete from "../hook/useTodoDelete";
-import useTodoUpdate from "../hook/useTodoUpdate";
+import { TodoState } from "../../../index";
+import { useGlobalStore } from "../../store/GlobalStore.ts";
+import { useTodoStore } from "../../store/TodoStore.ts";
+import useDebounce from "../../hook/useDebounce.ts";
+import useTodoDelete from "../../hook/todo/useTodoDelete.ts";
+import useTodoUpdate from "../../hook/todo/useTodoUpdate.ts";
 
 export default function TodoDetail() {
   const { todoUpdate } = useTodoUpdate();
@@ -16,8 +16,6 @@ export default function TodoDetail() {
 
   const startDate = new Date(todoState.startDate);
   const endDate = new Date(todoState.endDate);
-
-  // todo check ,delete 우상단
 
   // update state
   const updateOption = {
@@ -86,8 +84,8 @@ export default function TodoDetail() {
     <div
       className={`fixed inset-0 flex h-full w-full items-center justify-center ${globalState.detail ? "" : "hidden"}`}
     >
-      <div className="bg-customDark_3 fixed inset-0 h-full w-full opacity-70"></div>
-      <div className="todo-detail-modal bg-customDark_6 z-10 rounded px-6 py-4">
+      <div className="fixed inset-0 h-full w-full bg-customDark_3 opacity-70"></div>
+      <div className="todo-detail-modal z-10 rounded bg-customDark_6 px-6 py-4">
         <ul className="flex w-full flex-col gap-y-2">
           {/* title */}
           <li className="mb-2 flex">
@@ -108,7 +106,7 @@ export default function TodoDetail() {
                   setTodoState({ ...todoState, title: e.target.value });
                 }}
                 onBlur={() => toggleUpdateState(updateOption.title)}
-                className="bg-customDark_6 w-64 outline-none"
+                className="w-64 bg-customDark_6 outline-none"
                 autoFocus
               />
             ) : (
@@ -142,7 +140,7 @@ export default function TodoDetail() {
               {/* delete */}
               <button
                 onClick={() => {
-                  todoState.id ? todoDelete({ id: todoState.id }) : null;
+                  if (todoState.id) todoDelete({ id: todoState.id });
                 }}
               >
                 <svg
@@ -177,7 +175,7 @@ export default function TodoDetail() {
             {updateState.description ? (
               <div className="min-h-16">
                 <input
-                  defaultValue={todoState.description || ""}
+                  defaultValue={todoState.description ?? ""}
                   onChange={(e) => {
                     setTodoListState({
                       ...todoListState,
@@ -192,7 +190,7 @@ export default function TodoDetail() {
                     setTodoState({ description: e.target.value });
                   }}
                   onBlur={() => toggleUpdateState(updateOption.description)}
-                  className="bg-customDark_6 flex w-64 items-start justify-start align-top outline-none"
+                  className="flex w-64 items-start justify-start bg-customDark_6 align-top outline-none"
                   autoFocus
                 />
               </div>
@@ -201,7 +199,7 @@ export default function TodoDetail() {
                 onClick={() => toggleUpdateState(updateOption.description)}
                 className="flex min-h-16 w-40"
               >
-                {todoState.description || "내용"}
+                {todoState.description ?? "내용"}
               </button>
             )}
           </li>

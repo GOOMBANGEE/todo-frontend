@@ -1,4 +1,4 @@
-import { useEnvStore } from "../EnvStore";
+import { useEnvStore } from "../../store/EnvStore.ts";
 
 interface Props {
   time: string;

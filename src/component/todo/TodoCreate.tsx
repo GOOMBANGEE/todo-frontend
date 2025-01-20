@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import useTodoCreate from "../hook/useTodoCreate";
-import { useTodoStore } from "../TodoStore";
+import useTodoCreate from "../../hook/todo/useTodoCreate.ts";
+import { useTodoStore } from "../../store/TodoStore.ts";
 
 export default function TodoCreate() {
   const { todoCreate } = useTodoCreate();
@@ -32,7 +32,7 @@ export default function TodoCreate() {
   return (
     <>
       {createModalOpen ? (
-        <div className="border-customDark_6 todo-add-modal mb-4 flex flex-col rounded border px-2 py-2 text-start">
+        <div className="todo-add-modal mb-4 flex flex-col rounded border border-customDark_6 px-2 py-2 text-start">
           // todo
           {/* // create todo click -> focus hidden modal todo title */}
           {/* title */}
@@ -107,7 +107,7 @@ export default function TodoCreate() {
               endDate: new Date().toISOString(),
             });
           }}
-          className={`border-customDark_6 mb-4 cursor-text rounded border px-2 py-2 text-start`}
+          className={`mb-4 cursor-text rounded border border-customDark_6 px-2 py-2 text-start`}
         >
           create todo...
         </button>

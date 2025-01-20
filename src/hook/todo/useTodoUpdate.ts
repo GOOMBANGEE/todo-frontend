@@ -1,7 +1,7 @@
 import axios from "axios";
-import { TodoState } from "../..";
-import { useEnvStore } from "../EnvStore";
-import { FIND_OPTIONS, useTodoStore } from "../TodoStore";
+import { TodoState } from "../../../index";
+import { useEnvStore } from "../../store/EnvStore.ts";
+import { FIND_OPTIONS, useTodoStore } from "../../store/TodoStore.ts";
 
 interface Props {
   todo: TodoState;

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { TodoListState, TodoState } from "..";
+import { TodoListState, TodoState } from "../../index";
 
 interface TodoStore {
   findOption: FindOption;
