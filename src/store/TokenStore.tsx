@@ -1,8 +1,6 @@
 import { create } from "zustand";
 import axios from "axios";
 
-const TOKEN_EXPIRE_TIME = import.meta.env.VITE_ACCESS_TOKEN_EXPIRE_TIME;
-
 interface TokenStore {
   tokenState: TokenState;
   setTokenState: (state: Partial<TokenState>) => void;
@@ -11,12 +9,10 @@ interface TokenStore {
 
 interface TokenState {
   accessToken: string | undefined;
-  accessTokenExpireTime: number;
 }
 
 const initialTokenState: TokenState = {
   accessToken: undefined,
-  accessTokenExpireTime: TOKEN_EXPIRE_TIME,
 };
 
 export const useTokenStore = create<TokenStore>((set) => ({

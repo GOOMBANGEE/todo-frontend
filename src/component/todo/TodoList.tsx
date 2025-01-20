@@ -14,6 +14,7 @@ import {
 } from "../../store/TodoStore.ts";
 import Loading from "../Loading.tsx";
 import useTodoSearch from "../../hook/todo/useTodoSearch.ts";
+import { useTokenStore } from "../../store/TokenStore.tsx";
 
 interface Props {
   todoList: TodoState[];
@@ -35,10 +36,18 @@ export default function TodoList(props: Readonly<Props>) {
     todoListState,
     todoSearchListState,
   } = useTodoStore();
+  const { tokenState } = useTokenStore();
   const { globalState, setGlobalState } = useGlobalStore();
 
   const [isFocus, setIsFocus] = useState<boolean>(false);
   const [focusId, setFocusId] = useState<number>();
+
+  useEffect(() => {
+    if (tokenState.accessToken && todoListState.todoList.length === 0) {
+      setGlobalState({ loading: true });
+      fetchTodoAll({ page: 1 });
+    }
+  }, [tokenState.accessToken]);
 
   useEffect(() => {
     if (props.todoList.length > 0) {

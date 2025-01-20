@@ -10,8 +10,7 @@ export default function useTodoCreate() {
 
   const todoCreate = async () => {
     const todoUrl = envState.todoUrl;
-    const { id, ...request } = todoState;
-    console.log(request);
+    const { ...request } = todoState;
 
     const response = await axios.post(`${todoUrl}`, { ...request });
     const todo: TodoState = response.data;

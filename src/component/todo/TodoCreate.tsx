@@ -52,20 +52,18 @@ export default function TodoCreate() {
     } else if (await register({ username: "anonymous" })) {
       // 비회원인 경우 익명회원가입 절차 후 create 실행
       refreshAccessToken();
+      setAnonymousRegister(true);
     }
   };
 
   // 비회원인 경우 익명회원가입 절차 후 create 실행
   useEffect(() => {
-    if (tokenState.accessToken && todoState.title) setAnonymousRegister(true);
-  }, [tokenState.accessToken]);
-  useEffect(() => {
-    if (anonymousRegister) {
+    if (anonymousRegister && tokenState.accessToken) {
       todoCreate();
       setCreateModalOpen(false);
       setAnonymousRegister(false);
     }
-  }, [anonymousRegister]);
+  }, [anonymousRegister, tokenState.accessToken]);
 
   // click outside
   useEffect(() => {
