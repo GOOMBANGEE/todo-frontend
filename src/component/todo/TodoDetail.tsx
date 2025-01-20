@@ -10,8 +10,13 @@ import useTodoUpdate from "../../hook/todo/useTodoUpdate.ts";
 export default function TodoDetail() {
   const { todoUpdate } = useTodoUpdate();
   const { todoDelete } = useTodoDelete();
-  const { todoState, setTodoState, todoListState, setTodoListState } =
-    useTodoStore();
+  const {
+    todoState,
+    setTodoState,
+    resetTodoState,
+    todoListState,
+    setTodoListState,
+  } = useTodoStore();
   const { globalState, setGlobalState } = useGlobalStore();
 
   const startDate = new Date(todoState.startDate);
@@ -38,6 +43,15 @@ export default function TodoDetail() {
       ...prevState,
       [key]: !prevState[key],
     }));
+  };
+
+  // todo delete
+  const handleClickDelete = () => {
+    if (todoState.id) {
+      todoDelete({ id: todoState.id });
+      resetTodoState();
+      setGlobalState({ detail: false, initialRender: false });
+    }
   };
 
   // send update api
@@ -138,11 +152,7 @@ export default function TodoDetail() {
                 </span>
               </button>
               {/* delete */}
-              <button
-                onClick={() => {
-                  if (todoState.id) todoDelete({ id: todoState.id });
-                }}
-              >
+              <button onClick={handleClickDelete}>
                 <svg
                   width="24px"
                   height="24px"
@@ -223,7 +233,7 @@ export default function TodoDetail() {
                 selectsStart
                 startDate={startDate}
                 endDate={endDate}
-                dateFormat="yyyy-MM-dd"
+                dateFormat="YYYY-MM-DD"
               />
             </div>
           </li>
@@ -248,7 +258,7 @@ export default function TodoDetail() {
                 startDate={startDate}
                 endDate={endDate}
                 minDate={startDate} // 시작 날짜 이후로만 선택 가능
-                dateFormat="yyyy-MM-dd"
+                dateFormat="YYYY-MM-DD"
                 placeholderText="Select end date"
               />
             </div>
