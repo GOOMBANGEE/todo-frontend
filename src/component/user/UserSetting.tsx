@@ -1,7 +1,6 @@
 import { useUserStore } from "../../store/UserStore.tsx";
 import { FormEvent, useEffect } from "react";
 import useLogout from "../../hook/user/useLogout.tsx";
-import useUserDelete from "../../hook/user/useUserDelete.ts";
 import useUserUpdate from "../../hook/user/useUserUpdate.ts";
 import usePasswordRegex from "../../hook/user/usePasswordRegex.ts";
 import ErrorMessage from "../ErrorMessage.tsx";
@@ -10,7 +9,6 @@ export default function UserSetting() {
   const { passwordRegex } = usePasswordRegex();
   const { logout } = useLogout();
   const { userUpdate } = useUserUpdate();
-  const { userDelete } = useUserDelete();
   const { userState, setUserState } = useUserStore();
 
   // logout
@@ -34,9 +32,11 @@ export default function UserSetting() {
 
   // user delete
   const handleClickDelete = async () => {
-    if (await userDelete()) {
-      window.location.reload();
-    }
+    setUserState({
+      userSettingUserDeleteModal: true,
+      userSettingOpen: false,
+      passwordErrorMessage: undefined,
+    });
   };
 
   // click outside

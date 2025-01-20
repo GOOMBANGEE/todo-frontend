@@ -13,6 +13,7 @@ import AuthButton from "./component/user/AuthButton.tsx";
 import RegisterModal from "./component/user/RegisterModal.tsx";
 import TodoSearch from "./component/todo/TodoSearch.tsx";
 import UserSetting from "./component/user/UserSetting.tsx";
+import UserDeleteModal from "./component/user/UserDeleteModal.tsx";
 
 export default function App() {
   const { refreshAccessToken } = useRefreshAccessToken();
@@ -37,6 +38,8 @@ export default function App() {
       <div className="flex h-full w-full flex-col">
         <AuthButton />
         <UserSetting />
+        <UserDeleteModal />
+
         <LoginModal />
         <RegisterModal />
 
