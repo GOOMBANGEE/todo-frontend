@@ -4,26 +4,19 @@ import TodoCreate from "./component/todo/TodoCreate.tsx";
 import TodoDetail from "./component/todo/TodoDetail.tsx";
 import TodoList from "./component/todo/TodoList.tsx";
 import { useGlobalStore } from "./store/GlobalStore.ts";
-import useDebounce from "./hook/useDebounce";
 import useFetchTodoAll from "./hook/todo/useFetchTodoAll.ts";
-import useTodoSearch from "./hook/todo/useTodoSearch.ts";
 import { FIND_OPTIONS, useTodoStore } from "./store/TodoStore.ts";
 import LoginModal from "./component/user/LoginModal.tsx";
 import useRefreshAccessToken from "./hook/useRefreshAccessToken.tsx";
 import { useTokenStore } from "./store/TokenStore.tsx";
 import AuthButton from "./component/user/AuthButton.tsx";
 import RegisterModal from "./component/user/RegisterModal.tsx";
+import TodoSearch from "./component/todo/TodoSearch.tsx";
 
 export default function App() {
   const { refreshAccessToken } = useRefreshAccessToken();
   const { fetchTodoAll } = useFetchTodoAll();
-  const { todoSearch } = useTodoSearch();
-  const {
-    searchKeyword,
-    setSearchKeyword,
-    todoListState,
-    todoSearchListState,
-  } = useTodoStore();
+  const { searchKeyword, todoListState, todoSearchListState } = useTodoStore();
   const { tokenState } = useTokenStore();
   const { setGlobalState } = useGlobalStore();
 
@@ -38,14 +31,6 @@ export default function App() {
     }
   }, [tokenState.accessToken]);
 
-  const debouncedKeyword = useDebounce(searchKeyword, 200);
-  useEffect(() => {
-    if (searchKeyword) {
-      setGlobalState({ loading: true });
-      todoSearch({ keyword: debouncedKeyword, page: 1 });
-    }
-  }, [debouncedKeyword]);
-
   return (
     <div className="relative mx-auto flex h-full w-1/3 justify-center py-8 text-customText">
       <div className="flex h-full w-full flex-col">
@@ -54,21 +39,15 @@ export default function App() {
         <RegisterModal />
 
         <TodoCreate />
+
         <div className="mb-2 flex">
           <div className="flex gap-x-2">
             <FindOptionButton option={FIND_OPTIONS.ALL} />
             <FindOptionButton option={FIND_OPTIONS.IN_PROGRESS} />
             <FindOptionButton option={FIND_OPTIONS.DONE} />
           </div>
-
-          <input
-            placeholder="search"
-            className="ml-auto"
-            onChange={(e) => {
-              setSearchKeyword(e.target.value);
-            }}
-          />
         </div>
+        <TodoSearch />
         <div>
           {searchKeyword ? (
             <TodoList todoList={todoSearchListState.todoList} />

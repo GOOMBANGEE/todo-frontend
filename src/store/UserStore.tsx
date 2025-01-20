@@ -22,6 +22,13 @@ interface UserState {
   // login
   loginModalOpen: boolean;
   loginErrorMessage: string | undefined;
+
+  // profile setting
+  userSettingOpen: boolean;
+  userSettingLogoutModal: boolean;
+  userSettingDeleteUserModal: boolean;
+  newPassword: string | undefined;
+  newConfirmPassword: string | undefined;
 }
 
 const initialUserState: UserState = {
@@ -40,6 +47,13 @@ const initialUserState: UserState = {
   // login
   loginModalOpen: false,
   loginErrorMessage: undefined,
+
+  // profile setting
+  userSettingOpen: false,
+  userSettingLogoutModal: false,
+  userSettingDeleteUserModal: false,
+  newPassword: undefined,
+  newConfirmPassword: undefined,
 };
 
 export const useUserStore = create<UserStore>((set) => ({
